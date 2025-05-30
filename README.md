@@ -131,16 +131,96 @@ public class Main {
 
 ### 类型转换
 
-要把任意基础类型或引用类型转换为字符串，可以使用静态方法valueOf()。这是一个重载方法，编写
+要把任意基础类型或引用类型转换为字符串，可以使用静态方法valueOf()。这是一个重载方法，编译器会根据参数自动选择合适的方法：
 
+String.valueOf(123); // "123"
+String.valueOf(45.67); // "45.67"
+String.valueOf(true); // "true"
+String.valueOf(new Object()); // 类似java.lang.Object@636be97c
 
+要把字符串转换为其他类型，就需要根据情况。例如，把字符串转换为int类型：
 
+int n1 = Integer.parseInt("123"); // 123
+int n2 = Integer.parseInt("ff", 16); // 按十六进制转换，255
 
+把字符串转换为boolean类型：
+boolean b1 = Boolean.parseBoolean("true");//true
+boolean b2 = boolean.parseBoolean("False");//false
 
+注意 Integer有个getInteger(String)方法，它不是将字符串转换为int，而是把字符串对应的系统变量转换为Integer
 
+Integer.getInteger("java.version"); // 版本号，11
 
+### 转换为char[]
 
+String和char[]类型可以互相转换方法是：
 
+char[] cs = "Hello".toCharArray(); //String ->char[]
+String s = new String(cs); // char[]-->String
+
+如修改了char[] 数组，String并不会改变：
+
+// String <-> char[]
+public class Main {
+    public static void main(String[] args) {
+        char[] cs = "Hello".toCharArray();
+        String s = new String(cs);
+        System.out.println(s);
+        cs[0] = 'X';
+        System.out.println(s);
+    }
+}
+
+这是因为通过new String(char[]) 创建新的String实例时，它并不会直接引用传入的char[]数组，而是会复制一份，所以修改外部的char[]数组不会影响String实例内部的char[]数组，因为这是两个不同的数组。
+
+从String不变性设计，如果传入的对象有可能改变，我们需要复制而不是直接引用。
+
+// int[]
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        int[] scores = new int[] { 88, 77, 51, 66 };
+        Score s = new Score(scores);
+        s.printScores();
+        scores[2] = 99;
+        s.printScores();
+    }
+}
+
+class Score {
+    private int[] scores;
+    public Score(int[] scores) {
+        this.scores = scores;
+    }
+
+    public void printScores() {
+        System.out.println(Arrays.toString(scores));
+    }
+}
+
+观察两次输出，由于Score内部直接引用了外部传入的int[]数组，这会造成外部代码对int[]数组的修改，影响到score
+
+### 字符编码
+
+全球统一编码Unicode 
+变长编码UTF-8  因为unicode编码高字节总是00 
+
+在java中 char类型实际上就是两个字节的Unicode编码。如果我们要手动把字符串转换成其他编码，可以这样：
+
+byte[] b1 = "Hello".getBytes(); // 按系统默认编码转换，不推荐
+byte[] b2 = "Hello".getBytes("UTF-8"); // 按UTF-8编码转换
+byte[] b2 = "Hello".getBytes("GBK"); // 按GBK编码转换
+byte[] b3 = "Hello".getBytes(StandardCharsets.UTF_8); // 按UTF-8编码转换
+
+注意 转换编码后就不再是char类型，而是byte类型表示的数组。
+
+如果要把已知编码的byte[]转换为String，可以这样：
+
+String s = new String(b,"GBK"); //按 GBK转换
+String s2 = new String(b,StandardCharsets.UTF_8); //按UTF-8转换
+
+谨记 Java的String和char在内存中总是以Unicode编码表示。
 
 
 
