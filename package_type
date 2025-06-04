@@ -1,0 +1,137 @@
+### 包装类型
+
+数据类型分为两种
+  基本类型：byte,short,int,long,boolean,float,double,char;
+  引用类型：所有class和interface类型。
+引用类型可以赋值为null，表示空，但基本类型不能赋值为null:
+
+String s = null;
+int n = null; //compile error!
+
+如何把一个基本类型转为对象（引用类型）？
+
+例：想要把int基本类型转变为引用类型，可以先定义一个Integer类，它只包含一个实例字段int，这样，Integer类就可以视为int的包装类（wrapper Class）;
+
+public class Integer{
+    private int value;
+    public Integer(int value){
+      this.value = value;
+    }
+
+    public int intValue(){}
+      return this.value;
+}
+
+定义好了Integer类，我们就可以把int和Integer互相转换：
+
+Integer n = null;
+Integer n2 = new Integer(99);
+int n3 = n2.intValue();
+
+实际上，因为包装类型非常有用，Java核心库为每种基本类型都提供了对应的包装类型：
+
+基本类型	对应的引用类型
+boolean	java.lang.Boolean
+byte	java.lang.Byte
+short	java.lang.Short
+int	java.lang.Integer
+long	java.lang.Long
+float	java.lang.Float
+double	java.lang.Double
+char	java.lang.Character
+
+// Integer:
+public class Main {
+    public static void main(String[] args) {
+        int i = 100;
+        // 通过new操作符创建Integer实例(不推荐使用,会有编译警告):
+        Integer n1 = new Integer(i);
+        // 通过静态方法valueOf(int)创建Integer实例:
+        Integer n2 = Integer.valueOf(i);
+        // 通过静态方法valueOf(String)创建Integer实例:
+        Integer n3 = Integer.valueOf("100");
+        System.out.println(n3.intValue());
+    }
+}
+
+### Auto Boxing
+因为int和 Integer可以互相转换;
+int i = 100;
+Integer n = Integer.valueOf(i);
+int x = n.IntValue();
+所以 编译器可以帮助我们自动在int和integer之间转型：
+integer n = 100；//编译器自动使用Integer.valueOf(int)
+int x = n;//编译器自动使用Integer.IntValue()
+
+这种直接把int变为Integer的赋值写法，称之为自动装箱（Auto Boxing）;反过来 把Integer变为int的赋值写法称之为 自动拆箱
+
+** 自动拆箱\装箱只发生在编译阶段，目的是减少代码
+
+装箱和拆箱都会影响代码的执行效率，因为编译后的class代码是严格区分基本类型和引用类型的。且在 自动拆箱执行时可能会报NullPointerExcetion
+
+### 不变类
+所有包装类型都是不变类，
+
+查看Integer源码，核心代码如下:
+
+public final class Integer {
+    private final int value;
+}
+
+因此，一旦创建了Integer对象，该对象就是不变的。
+
+对两个Integer实例比较要特别注意：绝对不能用== 比较，因为Integer是引用类型，必须使用equals()比较：
+
+// == or equals?
+public class Main {
+    public static void main(String[] args) {
+        Integer x = 127;
+        Integer y = 127;
+        Integer m = 99999;
+        Integer n = 99999;
+        System.out.println("x == y: " + (x==y)); // true
+        System.out.println("m == n: " + (m==n)); // false
+        System.out.println("x.equals(y): " + x.equals(y)); // true
+        System.out.println("m.equals(n): " + m.equals(n)); // true
+    }
+}
+
+仔细观察发下 ==比较，较小的两个相同的Integer 返回true，较大的两个相同的Integer返回false，这是因为Integer是不变类，编译器把Integer x = 127;
+自动变为Integer x = Integer.valueOf(127);为了节省内存，Integer.valueOf()对于较小的数 始终返回相同的实例，因此，==比较"恰好"为True，
+但是绝不能因为标准库的Integer内部有优化缓存就用==比较，必须使用equals方法比较两个Integer。
+
+按照语义编程，而不是针对特定的底层实现去"优化".
+
+因为Integer.valueOf()可能始终返回同一个integer实例,因此在创建Integer的时候，可以使用两种方法“
+法1：Integer n= new Integer(100);
+法2：Integer n = Integer.valueOf(100);
+
+方法2更快 因为方法1总是需要创建新的Integer实例，方法2把内部优化留给Integer的实现者去完成，即使当前版本没有油画，也有可能在下个版本进行优化。
+
+把能创建"新"对象的静态方法称为静态工厂方法。Integer.valueOf()就是静态工厂方法，它尽可能地返回缓存的实例以节省内存，
+
+*** 最佳实践
+创建新对象时，优先选用静态工厂方法，而不是new操作符。
+
+如果观察Byte.valueOf() 方法的源码 可以看到标准库返回的Byte实例全部都是缓存实例，
+但是调用者并不关系静态工厂方法以何种发生创建实例还是返回会缓存的实例
+
+### 进制转换
+Integer 类本身还提供了大量方法，例如，最常用的静态方法parseInt() 可以把字符串解析成一个整数：
+
+int x1 = Integer.parseInt("100");//100
+int x2 = Integer.parseInt("100",16);//256,因为按16进制解析
+
+
+
+
+
+
+
+
+
+
+
+
+
+
