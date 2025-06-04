@@ -1,0 +1,73 @@
+### 包装类型
+
+数据类型分为两种
+  基本类型：byte,short,int,long,boolean,float,double,char;
+  引用类型：所有class和interface类型。
+引用类型可以赋值为null，表示空，但基本类型不能赋值为null:
+
+String s = null;
+int n = null; //compile error!
+
+如何把一个基本类型转为对象（引用类型）？
+
+例：想要把int基本类型转变为引用类型，可以先定义一个Integer类，它只包含一个实例字段int，这样，Integer类就可以视为int的包装类（wrapper Class）;
+
+public class Integer{
+    private int value;
+    public Integer(int value){
+      this.value = value;
+    }
+
+    public int intValue(){}
+      return this.value;
+}
+
+定义好了Integer类，我们就可以把int和Integer互相转换：
+
+Integer n = null;
+Integer n2 = new Integer(99);
+int n3 = n2.intValue();
+
+实际上，因为包装类型非常有用，Java核心库为每种基本类型都提供了对应的包装类型：
+
+基本类型	对应的引用类型
+boolean	java.lang.Boolean
+byte	java.lang.Byte
+short	java.lang.Short
+int	java.lang.Integer
+long	java.lang.Long
+float	java.lang.Float
+double	java.lang.Double
+char	java.lang.Character
+
+// Integer:
+public class Main {
+    public static void main(String[] args) {
+        int i = 100;
+        // 通过new操作符创建Integer实例(不推荐使用,会有编译警告):
+        Integer n1 = new Integer(i);
+        // 通过静态方法valueOf(int)创建Integer实例:
+        Integer n2 = Integer.valueOf(i);
+        // 通过静态方法valueOf(String)创建Integer实例:
+        Integer n3 = Integer.valueOf("100");
+        System.out.println(n3.intValue());
+    }
+}
+
+### Auto Boxing
+yw 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
