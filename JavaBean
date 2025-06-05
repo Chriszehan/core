@@ -1,0 +1,49 @@
+# JavaBean
+在java中 有很多class的定义都符合这样的规范
+
+· 若干private实例字段;
+· 通过public 方法来读写实例字段。
+
+例：
+public class Person {
+    private String name;
+    private int age;
+
+    public String getName() { return this.name; }
+    public void setName(String name) { this.name = name; }
+
+    public int getAge() { return this.age; }
+    public void setAge(int age) { this.age = age; }
+}
+
+如果读写方法符合以下这种命名规范：
+//读方法：
+public Type getXyz()
+public void setXyz(Type value)
+
+那么这种class 称之为JavaBean:
+上面字段是xyz，那么读写方法名分别以get和set开头，并且后接大写字母开头的字段名Xyz，因此两个读写方法名分别是getXyz()和setXyz()。
+
+boolean字段比较特殊，他的读方法一般为isXyz():
+
+// 读方法:
+public boolean isChild()
+// 写方法:
+public void setChild(boolean value)
+
+通常把一组对应的读方法（getter）和写方法（setter）称为属性（property）。例如name属性：
+
+对应的读方法：String getName（）
+对应的写方法：set Name（String）
+
+只有getter的属性称为的hi都
+
+
+
+
+
+
+
+
+
+
