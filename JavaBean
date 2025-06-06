@@ -36,7 +36,78 @@ public void setChild(boolean value)
 对应的读方法：String getName（）
 对应的写方法：set Name（String）
 
-只有getter的属性称为的hi都
+只有getter的属性称为只读属性（read-only），例如，定义一个age只读属性：
+· 对应的读方法是int getAge（）
+· 无对应的写方法...
+
+类似的，只有setter的属性称为只写属性（writer-only）。
+
+很明显，只读属性很常见，只写属性不常见。
+属性只需要定义getter和setter方法，不一定需要对应的字段。例如，child只读属性定义
+
+public class Person {
+    private String name;
+    private int age;
+
+    public String getName() { return this.name; }
+    public void setName(String name) { this.name = name; }
+
+    public int getAge() { return this.age; }
+    public void setAge(int age) { this.age = age; }
+
+    public boolean isChild() {
+        return age <= 6;
+    }
+}
+
+可以看出，getter和setter也是一种数据封装的方法。
+
+### javabean的作用
+
+javabean 主要是用来传递数据，即把一组数据组合合成一个javabean便于传输，此外javabean 可以方便地被IDE工具分析，生成读写属性的代码，主要用于图形界面的可视化设计中。
+
+通过IDE,可以快速生成getter和setter。..
+
+### 枚举JavaBean属性
+要枚举一个JavaBean的所有属性，可以直接使用Java核心库的Introspector：
+
+import Java.beans.*;
+
+public class Main{
+    public static void main(String[] args) throws Exception{
+        BeanInfo info  = Introspector.getBeanInfo(Person.class);
+        for(PropertyDescription pd : info.getPropertyDescriptors()){
+            sout(pd.getName());
+            sout(""+pd.getReadMethod());
+        }
+    }
+}
+
+class Person{
+    private String name;
+    private int age;
+
+    public String getName(){
+        return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public int getAge(){
+        return age;
+    }
+
+    public void setAge(int age){
+        this.age = age;
+    }
+}
+
+class属性是从Object继承的getClass()方法带来的。
+
+
+
 
 
 
