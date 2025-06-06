@@ -1,0 +1,100 @@
+# 枚举
+通过用static final 定义常量。例如 定义周一到周日 可以用7个不同的int 表示：
+
+public class Weekday{
+    public static final int SUN = 0;
+    public static final int MON = 1;
+    public static final int TUE = 2;
+    public static final int WED = 3;
+    public static final int THU = 4;
+    public static final int FRI = 5;
+    public static final int SAT = 6;
+}
+
+在使用常量的时候，可以这么引用：
+if（day == Weekday.SAT||day == Weekday.SUN）{//work home}
+
+也可以把常量定义为字符串类型，例如，定义三种颜色的常量：
+public class Color{
+    public Static final String RED = "r";
+    public static final String GREEN = "g";
+    public static final String BLUE = "b";
+}
+
+使用常量的时候 可以这么引用：
+
+String color = ...
+if(Color.RED.equals(color)){ }
+
+无论是int常量还是String常量，使用这些常量来表示一组枚举值的时候，有一个严重的问题，编译器无法检查值的合理性
+
+if(weekday ==6||weekday == 7){
+  if(tasks == weekday.MON){
+    //....
+  }
+}
+
+上述代码不会运行出错 但存在两个问题：
+
+注意到 weekday定义的常量范围是0~6，并不包含7，编译器无法检查不在枚举中的int值；
+定义的常量仍可与其他变量比较，但是用途并非是枚举星期值。
+
+# enum
+为了让编译器自动检查某个值在枚举的集合内，并且，不用用途的枚举需要不同类型来标记，不能混用，我们可以使用enum来定义枚举类；
+// enum
+public class Main{
+    public static void main(String[] args){
+      Weekday day = Weekday.SUN；
+      if(day == Weekday.SAT||day == Weekday.SUN){
+        sout("work home");
+      }else{
+        sout("work office");
+      }
+    }
+}
+
+enum Weekday{
+  SUN,MON,TUE,WED,THU,FRI,SAT;
+}
+
+注意到定义枚举类是通过关键字enum实现，我们只需要依次列举出枚举的常量名。
+
+和int定义的常量相比 ，使用enum定义的枚举：
+  1、enum常量本身带有类型信息，即Weekday.SUN类型是Weekday，编译器会自动检查类型错误，例如：
+  
+int day = 1;
+if (day == Weekday.SUN) { // Compile error: bad operand types for binary operator '=='
+}
+
+  2、不可能引用到非枚举的值，因为无法通过编译。
+  3、最后不同类型的枚举 不能互相比较或赋值，因为类型不符，例如不能给一个Weekday枚举类型的变量赋值为Color枚举类型的值：
+
+Weekday x = Weekday.SUN;// ok!
+Weekday y = Color.RED;// Compile error: incompatible types
+
+这就使得编译器可以在编译期间自动检查出所有可能的潜在错误。
+
+enum的比较
+使用enum定义的枚举类是一种应用类型。前面我们讲到引用类型比较，要使用equals()方法
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
