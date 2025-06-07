@@ -75,7 +75,184 @@ Weekday y = Color.RED;// Compile error: incompatible types
 这就使得编译器可以在编译期间自动检查出所有可能的潜在错误。
 
 enum的比较
-使用enum定义的枚举类是一种应用类型。前面我们讲到引用类型比较，要使用equals()方法
+使用enum定义的枚举类是一种应用类型。前面我们讲到引用类型比较，要使用equals()方法，如果使用==比较，它比较的是两个引用类型的变量是否是同一个对象。
+因此，引用类型比较，要始终使用equals()方法，但enum类型可以礼物
+
+这是因为enum类型的每个常量在JVM中只有一个唯一实例，所以可以直接使用==比较：
+if (day == Weekday.FRI) { // ok!
+}
+if (day.equals(Weekday.SUN)) { // ok, but more code!
+}
+
+## enum 类型
+
+通过enum定义的枚举类，和其他的class有什么区别？
+答案是没有任何区别，enum定义的类型就是class，只不过有几个特点：
+· 定义的enum类型总是继承自java.lang.Enum,且无法被继承；
+· 只能定义出enum的实例，而无法通过new操作符创建enum的实例；
+· 定义的每个实例都是引用类型的唯一实例；
+· 可以将enum类型用于switch语句
+
+
+例 定义Color枚举类：
+public enum Color {
+    RED, GREEN, BLUE;
+}
+
+编译器编译出的class大概是：
+
+public final class Color extends Enum { // 继承自Enum，标记为final class
+    // 每个实例均为全局唯一:
+    public static final Color RED = new Color();
+    public static final Color GREEN = new Color();
+    public static final Color BLUE = new Color();
+    // private构造方法，确保外部无法调用new操作符:
+    private Color() {}
+}
+
+所以，编译后的enum类和普通class并没有任何区别，但是我们自己无法安定一普通class那样定义enum，必须使用enum关键字 这是规定。
+
+因为enum是class 每个枚举值都是class实例，因此，有些方法
+### name()
+返回常量名，例：
+String s = Weekday.SUN.name(); // "SUN"
+
+### ordinal()
+返回定义的常量和顺序，从0开始计数，例如：
+int n = Weekday.MON.ordinal(); // 1
+
+改变枚举常量定义的顺序就会导致ordinal()返回值发生变化。例如：
+public enum Weekday {
+    SUN, MON, TUE, WED, THU, FRI, SAT;
+}
+和
+public enum Weekday {
+    MON, TUE, WED, THU, FRI, SAT, SUN;
+}
+的ordinal是不同的，在代码中如果编写了类似if(x.ordinal()==1)这样的语句，就要保证enum的枚举顺序不能变。
+新增的常量必须放在最后。
+
+Weekday的枚举常量如果要和int转换，使用ordinal()不是非常方便吗？
+例：
+String task = Weekday.MON.ordinal() + "/ppt";
+saveToFile(task);
+但是如果不小心修改了枚举的顺序，编译器是无法检查出这种逻辑错误的。
+要编写健壮的代码，就不要一块ordinal()的返回值。
+因为enum本身是class，所以我们可以定义private的构造方法，并且，给每个枚举常量添加字段：
+// enum
+public class Main {
+    public static void main(String[] args) {
+        Weekday day = Weekday.SUN;
+        if (day.dayValue == 6 || day.dayValue == 0) {
+            System.out.println("Work at home!");
+        } else {
+            System.out.println("Work at office!");
+        }
+    }
+}
+
+enum Weekday {
+    MON(1), TUE(2), WED(3), THU(4), FRI(5), SAT(6), SUN(0);
+
+    public final int dayValue;
+
+    private Weekday(int dayValue) {
+        this.dayValue = dayValue;
+    }
+}
+
+这样就无需担心顺序的变化，新增枚举常量时，也许指定一个int值。
+
+枚举类的字段也就可以是非final类型，既可以做运行期修改，但是不推荐这样做！
+
+默认情况下，对枚举常量调用toString()会返回和Name()一样的字符串，但是toString()可以被覆写，而name()不行
+
+可以给weekday添加toString()方法：
+
+public class Main{
+    public Static void main(String[] args){
+        Weekday day = Weekday.SUN;
+        if(day.dayValue ==6 || day.dayValue ==0){
+            sout("Today is"+day+".Work at home");
+        }else{
+            sout("Today is "+day+"work at office");
+        }
+    }
+}
+
+enum Weekday{
+    MON(1,"星期一"),TUE(2,"星期二"),WED(2,"星期三"),THU(2,"星期四"),FRI(2,"星期五"),SAT(2,"星期六"),SUN(2,"星期天")
+
+    public final int dayValue;
+    private final String chinese;
+
+    private Weekday(int dayValue,String chinese){
+        this.dayValue = dayValue;
+        this.chinese = chinese;
+    }
+
+    @override
+    public String toString(){
+        return this.chinese;
+    }
+}
+
+
+### Switch
+枚举类可以应用在switch语句中，因为枚举类天生具有类型信息和有限个枚举常量，所以比int、String类型更适合使用在Switch语句中：
+
+public class Main{
+    public static void main(String[] args){
+        Weekday day = Weekday.SUN;
+        switch(day){
+            case MON:
+            case TUE:
+            case WED:
+            case THU:
+            case FRI:
+                sout("Today is" + day + ".work at office");
+                break;
+            case SAT:
+            case SUN:
+                sout("Today is " + day + ".work at home);
+                break;
+            default:
+                throw new RuntimeExcetion("cannot process" + day);
+        }
+    }
+}
+
+enum Weekday{
+    MON,TUE,WED,THU,FRI,SAT,SUN;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
